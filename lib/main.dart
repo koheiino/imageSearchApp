@@ -29,8 +29,8 @@ class _PixabayState extends State<Pixabay> {
   /// 初期値空
   List hits = [];
 
-  Future fetchImages() async{
-    Response response = await Dio().get('https://pixabay.com/api/?key=38280410-0ed723b2ac1997dd0c9bd6fb7&q=yellow+flowers&image_type=photo');
+  Future fetchImages(String text) async{
+    Response response = await Dio().get('https://pixabay.com/api/?key=38280410-0ed723b2ac1997dd0c9bd6fb7&q=$text&image_type=photo&per_page=100');
     hits = response.data['hits'];
     setState(() {});
   }
@@ -38,12 +38,25 @@ class _PixabayState extends State<Pixabay> {
   @override
     void initState() {
       super.initState();
-      fetchImages();
+      fetchImages('月');
     }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: TextFormField(
+          ///最初の検索ワードの設定
+          initialValue: '月',
+          decoration: InputDecoration(
+            fillColor: Colors.white,
+            filled: true,
+          ),
+          onFieldSubmitted: (text) {
+            fetchImages(text);
+          },
+        ),
+      ),
       body: GridView.builder(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
         itemCount: hits.length,
